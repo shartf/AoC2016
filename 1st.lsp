@@ -61,11 +61,10 @@
         (lcoord (make-coord 0 0)))
     (dolist (item split-input)
       (setf lcoord (calculate-coordinates lcoord
-                                            (char item 0)
-                                            (parse-integer (string-left-trim "RL" item))
-                                            ldir))
-      (setf ldir (turn ldir (char item 0)))
-      )
+                    (char item 0)
+                    (parse-integer (string-left-trim "RL" item))
+                    ldir))
+      (setf ldir (turn ldir (char item 0))))
     lcoord))
 
 (defun final (list-of-directions)
