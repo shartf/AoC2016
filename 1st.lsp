@@ -18,22 +18,22 @@
     E + R -> S; E + L -> N
     S + R -> W; S + L -> E
     W + R -> N; W + L -> S"
-  (cond ((equal prev-state "E")
+  (cond ((string= prev-state "E")
          (cond
-           ((equal turn-direction "R") "S")
-           ((equal turn-direction "L") "N")))
-        ((equal prev-state "S")
+           ((string= turn-direction "R") "S")
+           ((string= turn-direction "L") "N")))
+        ((string= prev-state "S")
          (cond
-           ((equal turn-direction "R") "W")
-           ((equal turn-direction "L") "E")))
-        ((equal prev-state "W")
+           ((string= turn-direction "R") "W")
+           ((string= turn-direction "L") "E")))
+        ((string= prev-state "W")
          (cond
-           ((equal turn-direction "R") "N")
-           ((equal turn-direction "L") "S")))
-        ((equal prev-state "N")
+           ((string= turn-direction "R") "N")
+           ((string= turn-direction "L") "S")))
+        ((string= prev-state "N")
          (cond
-           ((equal turn-direction "R") "E")
-           ((equal turn-direction "L") "W")))))
+           ((string= turn-direction "R") "E")
+           ((string= turn-direction "L") "W")))))
 
 (defun add-coordinates (coord-one coord-two)
   (let ((new-coord (make-coord 0 0)))
@@ -54,6 +54,24 @@
       ((string= new-direction "N") (setf (coord-y position)
                                                   (+ (coord-y position) distance))))
     position))
+
+(defun count-coordinates (split-input)
+  "Takes a list of coordinates and returns coordinates with distance (structure)"
+  (let* ((ldir "N")
+        (lcoord (make-coord 0 0)))
+    (dolist (item split-input)
+      (setf lcoord (calculate-coordinates lcoord
+                                            (char item 0)
+                                            (parse-integer (string-left-trim "RL" item))
+                                            ldir))
+      (setf ldir (turn ldir (char item 0)))
+      )
+    lcoord))
+
+(defun final (list-of-directions)
+  (let ((result (count-coordinates list-of-directions)))
+  (+ (abs (coord-x result))
+     (abs (coord-y result)))))
 
 ; Test the turn function
 (def-suite in-system
