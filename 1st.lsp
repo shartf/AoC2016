@@ -1,6 +1,7 @@
 (require "asdf")
 (require "str")
 (ql:quickload "fiveam")
+(ql:quickload "iterate")
 (use-package :5am)
 
 (defvar input "R2, L5, L4, L5, R4, R1, L4, R5, R3, R1, L1, L1, R4, L4, L1, R4, L4, R4, L3, R5, R4, R1, R3, L1, L1, R1, L2, R5, L4, L3, R1, L2, L2, R192, L3, R5, R48, R5, L2, R76, R4, R2, R1, L1, L5, L1, R185, L5, L1, R5, L4, R1, R3, L4, L3, R1, L5, R4, L4, R4, R5, L3, L1, L2, L4, L3, L4, R2, R2, L3, L5, R2, R5, L1, R1, L3, L5, L3, R4, L4, R3, L1, R5, L3, R2, R4, R2, L1, R3, L1, L3, L5, R4, R5, R2, R2, L5, L3, L1, L1, L5, L2, L3, R3, R3, L3, L4, L5, R2, L1, R1, R3, R4, L2, R1, L1, R3, R3, L4, L2, R5, R5, L1, R4, L5, L5, R1, L5, R4, R2, L1, L4, R1, L1, L1, L5, R3, R4, L2, R1, R2, R1, R1, R3, L5, R1, R4")
@@ -72,6 +73,40 @@
   (+ (abs (coord-x result))
      (abs (coord-y result)))))
 
+(defun write-to-arr (coord arr idx)
+  (setf (apply #'aref arr idx '(0)) (coord-x coord))
+  (setf (apply #'aref arr idx '(1)) (coord-y coord))
+  arr)
+
+(defun search-in-array (coord arr)
+  "Searches in an array for coordinates"
+  (let ((new-arr (make-array (list 1 2))))
+    (setf (apply #'aref new-arr 0 '(0)) (coord-x coord))
+    (setf (apply #'aref new-arr 0 '(1)) (coord-y coord))
+    ;; compare new-array against the existing array. Return true if found.
+    (dotimes (n (first (array-dimensions arr)))
+      (print (aref arr n '(1))))
+      ))
+
+(defun visit-twice (split-input)
+  "Takes a list of coordinates and returns coordinates with distance (structure)"
+  (let* ((ldir "N")
+         (lcoord (make-coord 0 0))
+         (larr (make-array (list (list-length split-input) 2))))
+    (loop
+      for i from 0 upto (list-length split-input) collect i
+      do ((setf lcoord (calculate-coordinates lcoord
+                    (char (nth i split-inpunt) 0)
+                    (parse-integer (string-left-trim "RL" (nth i split-inpunt)))
+                    ldir))
+          (setf ldir (turn ldir (char (nth i split-inpunt) 0))))
+         ;; if larr has length 0, write to it, else check for contents and breack out in case of match
+         (when (nil) ;;tests for coordinates in array
+           (return lcoord)
+           (write-to-arr lcoord larr i))
+      )))
+
+
 ; Test the turn function
 (def-suite in-system
   :description "Tests for the first day")
@@ -88,5 +123,10 @@
   (is (equalp (make-coord 2 0) (calculate-coordinates (make-coord 0 0) "R" 2 "N")))
   (is (equalp (make-coord -2 0) (calculate-coordinates (make-coord 0 0) "L" 2 "N")))
   (is (equalp (make-coord 0 2) (calculate-coordinates (make-coord 0 0) "L" 2 "E"))))
+(test write-to-arr :in-system
+  (let* ((arr (make-array '(1 2)))
+         (arr-test (make-array '(1 2) :initial-contents '((2 3))))
+         (test-coord (make-coord 2 3)))
+    (is (equalp arr-test (write-to-arr test-coord arr 0)))))
 ; run all tests
 (fiveam:run!)
