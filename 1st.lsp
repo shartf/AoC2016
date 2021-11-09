@@ -1,8 +1,8 @@
 (require "asdf")
-(require "str")
+(ql:quickload "str")
 (ql:quickload "fiveam")
-(ql:quickload "iterate")
 (use-package :5am)
+(ql:quickload :array-operations)
 
 (defvar input "R2, L5, L4, L5, R4, R1, L4, R5, R3, R1, L1, L1, R4, L4, L1, R4, L4, R4, L3, R5, R4, R1, R3, L1, L1, R1, L2, R5, L4, L3, R1, L2, L2, R192, L3, R5, R48, R5, L2, R76, R4, R2, R1, L1, L5, L1, R185, L5, L1, R5, L4, R1, R3, L4, L3, R1, L5, R4, L4, R4, R5, L3, L1, L2, L4, L3, L4, R2, R2, L3, L5, R2, R5, L1, R1, L3, L5, L3, R4, L4, R3, L1, R5, L3, R2, R4, R2, L1, R3, L1, L3, L5, R4, R5, R2, R2, L5, L3, L1, L1, L5, L2, L3, R3, R3, L3, L4, L5, R2, L1, R1, R3, R4, L2, R1, L1, R3, R3, L4, L2, R5, R5, L1, R4, L5, L5, R1, L5, R4, R2, L1, L4, R1, L1, L1, L5, R3, R4, L2, R1, R2, R1, R1, R3, L5, R1, R4")
 (defparameter split-input (str:split ", " input))
@@ -37,6 +37,7 @@
            ((string= turn-direction "L") "W")))))
 
 (defun add-coordinates (coord-one coord-two)
+  "Adds two coordinates"
   (let ((new-coord (make-coord 0 0)))
   (setf (coord-x new-coord) (+ (coord-x coord-one) (coord-x coord-two)))
   (setf (coord-y new-coord) (+ (coord-y coord-one) (coord-y coord-two)))
@@ -52,7 +53,7 @@
                                                   (- (coord-y position) distance)))
       ((string= new-direction "W") (setf (coord-x position)
                                                   (- (coord-x position) distance)))
-      ((string= new-direction "N") (setf (coord-y position)
+.      ((string= new-direction "N") (setf (coord-y position)
                                                   (+ (coord-y position) distance))))
     position))
 
@@ -65,7 +66,8 @@
                     (char item 0)
                     (parse-integer (string-left-trim "RL" item))
                     ldir))
-      (setf ldir (turn ldir (char item 0))))
+      (setf ldir (turn ldir (char item 0)))
+      (print (coord-x lcoord) ))
     lcoord))
 
 (defun final (list-of-directions)
@@ -78,33 +80,73 @@
   (setf (apply #'aref arr idx '(1)) (coord-y coord))
   arr)
 
+(defparameter arr (make-array '(3 2) :initial-contents '((2 3) (2 5) (6 4))))
+(defparameter arr-to-add (make-array '(1 2) :initial-contents '((12 45))))
+(defparameter stacked-arr (aops::stack 0 arr arr-to-add))
+(defparameter test-coord (make-coord 2 5))
 (defun search-in-array (coord arr)
   "Searches in an array for coordinates"
   (let ((new-arr (make-array (list 1 2))))
     (setf (apply #'aref new-arr 0 '(0)) (coord-x coord))
     (setf (apply #'aref new-arr 0 '(1)) (coord-y coord))
-    ;; compare new-array against the existing array. Return true if found.
-    (dotimes (n (first (array-dimensions arr)))
-      (print (aref arr n '(1))))
-      ))
+    ;; (dotimes (n (first (array-dimensions arr)))
+    (loop
+          for i below (array-dimension arr 0)
+          do (if (and
+                  (equal (aref arr i 0) (aref new-arr 0 0))
+                  (equal (aref arr i 1) (aref new-arr 0 1)))
+                 T
+                 NIL))))
+
+(defun create-intermediate (last-coord new-coord arr)
+  (cond
+    ((not (equal (coord-x last-coord) (coord-x new-coord)))
+     (loop
+       for i from (coord-x last-coord) to (coord-x new-coord)
+       do (setf arr (aops::stack 0 arr (make-array '(1 2) :initial-contents `((,i ,(coord-y last-coord))))))))
+     ((not (equal (coord-y last-coord) (coord-y new-coord)))
+      (loop
+        for i from (coord-y last-coord) to coord-y new-coord
+        do (setf arr (aops::stack 0 arr (make-array '(1 2) :initial-contents `((,(coord-x last-coord) ,i))))))))
+  arr)
 
 (defun visit-twice (split-input)
-  "Takes a list of coordinates and returns coordinates with distance (structure)"
   (let* ((ldir "N")
          (lcoord (make-coord 0 0))
-         (larr (make-array (list (list-length split-input) 2))))
-    (loop
-      for i from 0 upto (list-length split-input) collect i
-      do ((setf lcoord (calculate-coordinates lcoord
-                    (char (nth i split-inpunt) 0)
-                    (parse-integer (string-left-trim "RL" (nth i split-inpunt)))
-                    ldir))
-          (setf ldir (turn ldir (char (nth i split-inpunt) 0))))
-         ;; if larr has length 0, write to it, else check for contents and breack out in case of match
-         (when (nil) ;;tests for coordinates in array
-           (return lcoord)
-           (write-to-arr lcoord larr i))
-      )))
+         (larr (make-array '(10000 2))))
+    "here an if condition to check whether lcoord is in larr. If T, return lcoord, else loop below?"
+    (loop named loop-1
+          for i below (list-length split-input)
+          do ("calculate new coordinates to a local variable NCOORD"
+              (let ((ncoord (calculate-coordinates lcoord
+                                                  (char (nth i split-input) 0)
+                                                  (parse-integer (string-left-trim "RL" (nth i split-input)))
+                                                  ldir)))
+                "set ldir to the last direction, we will not not need it in that step anymore"
+                (setf ldir (turn ldir (char (nth i split-input) 0)))
+              "calculate and put new intermediate coordinates between lcoor and NCOORD into larr"
+
+              "setf lcoord NCOORD"
+              )))))
+;; (defun visit-twice (split-input)
+;;   "Takes a list of coordinates and returns coordinates with distance (structure)"
+;;   (let* ((ldir "N")
+;;          (lcoord (make-coord 0 0))
+;;          (larr (make-array (list (list-length split-input) 2))))
+;;     (loop named loop-1
+;;       for i below (list-length split-input)
+;;       do ((setf lcoord (calculate-coordinates lcoord
+;;                     (char (nth i split-inpunt) 0)
+;;                     (parse-integer (string-left-trim "RL" (nth i split-inpunt)))
+;;                     ldir))
+;;           (setf ldir (turn ldir (char (nth i split-inpunt) 0))))
+;;          ;; if larr has length 0, write to it, else check for contents and breack out in case of match
+;;          when (search-in-array lcoord larr) ;;tests for coordinates in array
+;;            do (return-from loop-1 (lcoord))
+;;            ;; (return lcoord)
+;;            ;; (write-to-arr lcoord larr i)
+;;           )
+;;       ))
 
 
 ; Test the turn function
@@ -126,7 +168,9 @@
 (test write-to-arr :in-system
   (let* ((arr (make-array '(1 2)))
          (arr-test (make-array '(1 2) :initial-contents '((2 3))))
-         (test-coord (make-coord 2 3)))
-    (is (equalp arr-test (write-to-arr test-coord arr 0)))))
+         (test-coord (make-coord 2 3))
+         (test-coord-not (make-coord 3 3)))
+    (is (equalp arr-test (write-to-arr test-coord arr 0)))
+    (is-false (equalp arr-test (write-to-arr test-coord-not arr 0)))))
 ; run all tests
 (fiveam:run!)
