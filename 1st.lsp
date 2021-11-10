@@ -106,47 +106,30 @@
        do (setf arr (aops::stack 0 arr (make-array '(1 2) :initial-contents `((,i ,(coord-y last-coord))))))))
      ((not (equal (coord-y last-coord) (coord-y new-coord)))
       (loop
-        for i from (coord-y last-coord) to coord-y new-coord
+        for i from (coord-y last-coord) to (coord-y new-coord)
         do (setf arr (aops::stack 0 arr (make-array '(1 2) :initial-contents `((,(coord-x last-coord) ,i))))))))
   arr)
 
 (defun visit-twice (split-input)
-  (let* ((ldir "N")
-         (lcoord (make-coord 0 0))
-         (larr (make-array '(10000 2))))
     "here an if condition to check whether lcoord is in larr. If T, return lcoord, else loop below?"
-    (loop named loop-1
-          for i below (list-length split-input)
-          do ("calculate new coordinates to a local variable NCOORD"
-              (let ((ncoord (calculate-coordinates lcoord
-                                                  (char (nth i split-input) 0)
+    (loop
+      with ldir = "N"
+      with lcoord = (make-coord 0 0)
+      with larr = (make-array '(10000 2))
+          for i from 0 to (list-length split-input)
+        if (equal (search-in-array lcoord larr) T)
+        do (print (coord-x lcoord))
+        else do (let ((ncoord (calculate-coordinates lcoord (char (nth i split-input) 0)
                                                   (parse-integer (string-left-trim "RL" (nth i split-input)))
                                                   ldir)))
                 "set ldir to the last direction, we will not not need it in that step anymore"
                 (setf ldir (turn ldir (char (nth i split-input) 0)))
-              "calculate and put new intermediate coordinates between lcoor and NCOORD into larr"
-
-              "setf lcoord NCOORD"
-              )))))
-;; (defun visit-twice (split-input)
-;;   "Takes a list of coordinates and returns coordinates with distance (structure)"
-;;   (let* ((ldir "N")
-;;          (lcoord (make-coord 0 0))
-;;          (larr (make-array (list (list-length split-input) 2))))
-;;     (loop named loop-1
-;;       for i below (list-length split-input)
-;;       do ((setf lcoord (calculate-coordinates lcoord
-;;                     (char (nth i split-inpunt) 0)
-;;                     (parse-integer (string-left-trim "RL" (nth i split-inpunt)))
-;;                     ldir))
-;;           (setf ldir (turn ldir (char (nth i split-inpunt) 0))))
-;;          ;; if larr has length 0, write to it, else check for contents and breack out in case of match
-;;          when (search-in-array lcoord larr) ;;tests for coordinates in array
-;;            do (return-from loop-1 (lcoord))
-;;            ;; (return lcoord)
-;;            ;; (write-to-arr lcoord larr i)
-;;           )
-;;       ))
+                "calculate and put new intermediate coordinates between lcoor and NCOORD into larr"
+                (setf larr (create-intermediate lcoord ncoord larr))
+                "setf lcoord NCOORD"
+                (setf (coord-x lcoord) (coord-x ncoord))
+                (setf (coord-y lcoord) (coord-y ncoord))
+              )))
 
 
 ; Test the turn function
