@@ -53,7 +53,7 @@
                                                   (- (coord-y position) distance)))
       ((string= new-direction "W") (setf (coord-x position)
                                                   (- (coord-x position) distance)))
-.      ((string= new-direction "N") (setf (coord-y position)
+      ((string= new-direction "N") (setf (coord-y position)
                                                   (+ (coord-y position) distance))))
     position))
 
@@ -89,47 +89,47 @@
   (let ((new-arr (make-array (list 1 2))))
     (setf (apply #'aref new-arr 0 '(0)) (coord-x coord))
     (setf (apply #'aref new-arr 0 '(1)) (coord-y coord))
-    ;; (dotimes (n (first (array-dimensions arr)))
+   ;; (dotimes (n (first (array-dimensions arr)))
     (loop
           for i below (array-dimension arr 0)
           do (if (and
-                  (equal (aref arr i 0) (aref new-arr 0 0))
-                  (equal (aref arr i 1) (aref new-arr 0 1)))
+                  (= (aref arr i 0) (aref new-arr 0 0))
+                  (= (aref arr i 1) (aref new-arr 0 1)))
                  T
                  NIL))))
 
 (defun create-intermediate (last-coord new-coord arr)
   (cond
-    ((not (equal (coord-x last-coord) (coord-x new-coord)))
+    ((equal (coord-y last-coord) (coord-y new-coord))
      (loop
        for i from (coord-x last-coord) to (coord-x new-coord)
        do (setf arr (aops::stack 0 arr (make-array '(1 2) :initial-contents `((,i ,(coord-y last-coord))))))))
-     ((not (equal (coord-y last-coord) (coord-y new-coord)))
+     ((equal (coord-x last-coord) (coord-x new-coord))
       (loop
         for i from (coord-y last-coord) to (coord-y new-coord)
         do (setf arr (aops::stack 0 arr (make-array '(1 2) :initial-contents `((,(coord-x last-coord) ,i))))))))
   arr)
 
 (defun visit-twice (split-input)
-    "here an if condition to check whether lcoord is in larr. If T, return lcoord, else loop below?"
+  (let* ((ldir "N")
+         (lcoord (make-coord 0 0))
+         (larr (make-array '(1 2))))
     (loop
-      with ldir = "N"
-      with lcoord = (make-coord 0 0)
-      with larr = (make-array '(10000 2))
-          for i from 0 to (list-length split-input)
-        if (equal (search-in-array lcoord larr) T)
-        do (print (coord-x lcoord))
-        else do (let ((ncoord (calculate-coordinates lcoord (char (nth i split-input) 0)
-                                                  (parse-integer (string-left-trim "RL" (nth i split-input)))
-                                                  ldir)))
+      for i below (list-length split-input)
+      if (equal (search-in-array lcoord larr) T)
+        do (print "NAHUY")
+      else do (let ((ncoord (calculate-coordinates lcoord (char (nth i split-input) 0)
+                                                   (parse-integer (string-left-trim "RL" (nth i split-input)))
+                                                   ldir)))
+                (print (search-in-array ncoord larr))
                 "set ldir to the last direction, we will not not need it in that step anymore"
                 (setf ldir (turn ldir (char (nth i split-input) 0)))
                 "calculate and put new intermediate coordinates between lcoor and NCOORD into larr"
                 (setf larr (create-intermediate lcoord ncoord larr))
+                ;(print larr)
                 "setf lcoord NCOORD"
-                (setf (coord-x lcoord) (coord-x ncoord))
-                (setf (coord-y lcoord) (coord-y ncoord))
-              )))
+                (setf lcoord ncoord)
+                ))))
 
 
 ; Test the turn function
@@ -155,5 +155,17 @@
          (test-coord-not (make-coord 3 3)))
     (is (equalp arr-test (write-to-arr test-coord arr 0)))
     (is-false (equalp arr-test (write-to-arr test-coord-not arr 0)))))
+(test create-intermediate-test :in-system
+  (let* ((arr (make-array '(1 2) :initial-contents '((1 3))))
+         (last-coord (make-coord 2 3))
+         (new-coord (make-coord 4 3))
+         (new-arr (make-array '(4 2) :initial-contents '((1 3) (2 3) (3 3) (4 3)))))
+    (is (equalp new-arr (create-intermediate last-coord new-coord arr)))))
+(test search-in-array-test :in-system
+  (let* ((arr (make-array '(4 2) :initial-contents '((2 4) (-14 30) (-190 12) (22 -10))))
+         (first-coord (make-coord -14 30))
+         (second-coord (make-coord 22 -10)))
+    (is (equal T (search-in-array first-coord arr)))
+    (is (equal T (search-in-array second-coord arr)))))
 ; run all tests
 (fiveam:run!)
