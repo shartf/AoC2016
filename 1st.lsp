@@ -91,12 +91,12 @@
     (setf (apply #'aref new-arr 0 '(1)) (coord-y coord))
    ;; (dotimes (n (first (array-dimensions arr)))
     (loop
-          for i below (array-dimension arr 0)
-          do (if (and
+      for i below (array-dimension arr 0)
+      when (and
                   (= (aref arr i 0) (aref new-arr 0 0))
-                  (= (aref arr i 1) (aref new-arr 0 1)))
-                 T
-                 NIL))))
+                  (= (aref arr i 1) (aref new-arr 0 1))
+                  (not (equalp #2A((0 0)) new-arr)))
+        return T)))
 
 (defun create-intermediate (last-coord new-coord arr)
   (cond
@@ -114,10 +114,10 @@
   (let* ((ldir "N")
          (lcoord (make-coord 0 0))
          (larr (make-array '(1 2))))
-    (loop
+    (loop named 7-loop
       for i below (list-length split-input)
       if (equal (search-in-array lcoord larr) T)
-        do (print "NAHUY")
+        do (return-from 7-loop (print lcoord))
       else do (let ((ncoord (calculate-coordinates lcoord (char (nth i split-input) 0)
                                                    (parse-integer (string-left-trim "RL" (nth i split-input)))
                                                    ldir)))
@@ -129,7 +129,30 @@
                 ;(print larr)
                 "setf lcoord NCOORD"
                 (setf lcoord ncoord)
-                ))))
+                )
+          finally (return larr))))
+
+
+(defun visit-twice2 (split-input)
+    (loop named 7-loop
+          with ldir = "N"
+          with lcoord = (make-coord 0 0)
+          with larr = (make-array '(1 2))
+          with ncoord = (make-coord 0 0)
+      for i below (list-length split-input)
+      do ((setf ncoord (calculate-coordinates lcoord (char (nth i split-input) 0)
+                                                   (parse-integer (string-left-trim "RL" (nth i split-input)))
+                                                   ldir))
+                "set ldir to the last direction, we will not not need it in that step anymore"
+                (setf ldir (turn ldir (char (nth i split-input) 0)))
+                "calculate and put new intermediate coordinates between lcoor and NCOORD into larr"
+                (setf larr (create-intermediate lcoord ncoord larr))
+                (print ncoord)
+                "setf lcoord NCOORD"
+           (setf (coord-x lcoord) (coord-x ncoord))
+           (setf (coord-y lcoord) (coord-y ncoord))
+
+           (print lcoord))))
 
 
 ; Test the turn function
