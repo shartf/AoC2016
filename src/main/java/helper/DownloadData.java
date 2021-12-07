@@ -7,5 +7,11 @@ public class DownloadData {
         String sessionCookie;
         sessionCookie = fileReader.readFile(sessionPath);
 
+        var fWriter = new FWriter();
+        var dir = "src/main/resources/";
+        var filename = "test";
+        fWriter.fWriter("test test\n test", dir, filename);
+
+
     }
 }

@@ -8,7 +8,7 @@ public class FWriter {
         File file = new File(dir, filename+".txt");
         String path = dir + filename + ".txt";
         if (file.exists()) {
-            return;
+            System.out.println("File aready exists, skipping");
         } else {
             try {
                 FileWriter fileWriter = new FileWriter(path);
