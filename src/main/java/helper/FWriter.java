@@ -10,8 +10,7 @@ public class FWriter {
         if (file.exists()) {
             System.out.println("File aready exists, skipping");
         } else {
-            try {
-                FileWriter fileWriter = new FileWriter(path);
+            try (FileWriter fileWriter = new FileWriter(path)){
                 fileWriter.write(contents);
             } catch (Exception e) {
                 e.printStackTrace();
