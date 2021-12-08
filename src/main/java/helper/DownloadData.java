@@ -2,7 +2,6 @@ package helper;
 
 import java.io.IOException;
 import java.net.URI;
-import java.net.URL;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
@@ -21,7 +20,7 @@ public class DownloadData {
 
         HttpRequest httpRequest = HttpRequest.newBuilder()
                 .GET()
-                .uri(URI.create("https://adventofcode.com/" + year + "/" + day + "/input"))
+                .uri(URI.create("https://adventofcode.com/" + year + "/day/" + day + "/input"))
                 .setHeader("Cookie", "session=" + sessionCookie)
                 .build();
 
