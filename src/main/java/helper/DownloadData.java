@@ -1,5 +1,6 @@
 package helper;
 
+import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -9,30 +10,32 @@ import java.time.Duration;
 
 public class DownloadData {
     public void downloadFile (String filename, int year, int day) throws IOException, InterruptedException {
+
         // read the locally stored session cookie
         var fileReader = new FileReader();
         var sessionPath = "src/main/java/helper/Session";
-        String sessionCookie;
-        sessionCookie = fileReader.readFile(sessionPath);
+        var resourceDir = "src/main/resources/";
+        // check for existing file
+        var fileWriter = new FWriter();
+        if (fileWriter.fChecker(resourceDir, filename)) {
+           System.out.println("Doing nothing");
+        } else {
+            String sessionCookie;
+            sessionCookie = fileReader.readFile(sessionPath);
+            // request the data from AoC
+            HttpRequest httpRequest = HttpRequest.newBuilder()
+                    .GET()
+                    .uri(URI.create("https://adventofcode.com/" + year + "/day/" + day + "/input"))
+                    .setHeader("Cookie", "session=" + sessionCookie)
+                    .build();
 
-        // request the data from AoC
-        //URL url = new URL("https://adventofcode.com/" + year + "/" + day + "/input");
+            HttpResponse<String> response = httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString());
+            System.out.println("Request status is " + response.statusCode());
+            System.out.println(response.body());
 
-        HttpRequest httpRequest = HttpRequest.newBuilder()
-                .GET()
-                .uri(URI.create("https://adventofcode.com/" + year + "/day/" + day + "/input"))
-                .setHeader("Cookie", "session=" + sessionCookie)
-                .build();
-
-        HttpResponse<String> response = httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString());
-        System.out.println(response.body());
-
-        // Write a file with provided name and url
-        /*
-        var fWriter = new FWriter();
-        var dir = "src/main/resources/";
-        fWriter.fWriter("test test\n test", dir, filename);
-        */
+            // Write a file with provided name and url
+            fileWriter.fWriter(response.body(), resourceDir, filename);
+        }
     }
 
 
