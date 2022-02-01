@@ -26,5 +26,44 @@ public class D1 {
         }
     }
 
+    private enum Directions {
+        N, E, S, W;
+    }
+
+    private enum Turns {
+        L, R;
+    }
+
+    private Directions turnTo (Directions direction, Turns turn) {
+        int currentDirection, newDirection;
+        switch (direction) {
+            case N -> currentDirection = 0;
+            case E -> currentDirection = 1;
+            case S -> currentDirection = 2;
+            case W -> currentDirection = 3;
+            default -> throw new IllegalStateException("Unexpected value: " + direction);
+        }
+        if (turn.equals(Turns.R)) {
+            currentDirection += 1;
+        } else {
+            currentDirection -= 1;
+        }
+        newDirection = currentDirection % 4;
+        switch (newDirection) {
+            case 0 -> {
+                return Directions.N;
+            }
+            case 1 -> {
+                return Directions.E;
+            }
+            case 2 -> {
+                return Directions.S;
+            }
+            case 3 -> {
+                return Directions.W;
+            }
+        }
+    }
+
 
 }
