@@ -26,43 +26,38 @@ public class D1 {
         }
     }
 
-    private enum Directions {
-        N, E, S, W;
-    }
+    enum Directions {
+        N(0), E(1), S(2), W(3);
 
-    private enum Turns {
-        L, R;
-    }
-
-    private Directions turnTo (Directions direction, Turns turn) {
-        int currentDirection, newDirection;
-        switch (direction) {
-            case N -> currentDirection = 0;
-            case E -> currentDirection = 1;
-            case S -> currentDirection = 2;
-            case W -> currentDirection = 3;
-            default -> throw new IllegalStateException("Unexpected value: " + direction);
+        public final int label;
+        Directions(int label) {
+            this.label = label;
         }
+
+        public static Directions valueOfLabel(int label) {
+            for (Directions d : values()) {
+                if (d.label == label) {
+                    return d;
+                }
+            }
+            return null;
+        }
+    }
+
+
+    enum Turns {
+        L, R
+    }
+
+    public static Directions turnTo(Directions direction, Turns turn) {
+        int currentDirection;
+        Directions newDirection;
         if (turn.equals(Turns.R)) {
-            currentDirection += 1;
+            currentDirection = direction.label + 1;
         } else {
-            currentDirection -= 1;
+            currentDirection = direction.label - 1;
         }
-        newDirection = currentDirection % 4;
-        switch (newDirection) {
-            case 0 -> {
-                return Directions.N;
-            }
-            case 1 -> {
-                return Directions.E;
-            }
-            case 2 -> {
-                return Directions.S;
-            }
-            case 3 -> {
-                return Directions.W;
-            }
-        }
+        return Directions.valueOfLabel(currentDirection % 4);
     }
 
 
