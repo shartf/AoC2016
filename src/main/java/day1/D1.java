@@ -48,17 +48,17 @@ public class D1 {
     enum Turns {
         L, R
     }
-
+/*Takes current Direction and Side to turn and returns a new Direction */
     public static Directions turnTo(Directions direction, Turns turn) {
         int currentDirection;
-        Directions newDirection;
         if (turn.equals(Turns.R)) {
             currentDirection = direction.label + 1;
         } else {
             currentDirection = direction.label - 1;
         }
-        return Directions.valueOfLabel(currentDirection % 4);
+        return Directions.valueOfLabel((currentDirection + 4) % 4);
     }
+
 
 
 }
