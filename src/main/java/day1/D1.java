@@ -5,6 +5,7 @@ import helper.DownloadData;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -44,10 +45,14 @@ public class D1 {
         }
     }
 
-
     enum Turns {
         L, R
     }
+
+    public record Cartesian (int x, int y) {
+
+    }
+
 /*Takes current Direction and Side to turn and returns a new Direction */
     public static Directions turnTo(Directions direction, Turns turn) {
         int currentDirection;
@@ -59,6 +64,17 @@ public class D1 {
         return Directions.valueOfLabel((currentDirection + 4) % 4);
     }
 
+// Directions direction = direction.valueOf("N") -> convert string to Enum
+
+    public static ArrayList<Cartesian> calculateDistance (String directionString, int distance, Cartesian cartesian) {
+        // instantiate list of cartesians
+        var cartList = new ArrayList<Cartesian>();
+
+
+        Directions direction = null;
+        direction = direction.valueOf(directionString);
+
+    }
 
 
 }
