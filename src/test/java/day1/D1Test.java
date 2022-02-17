@@ -14,4 +14,7 @@ class D1Test {
         assertEquals(D1.Directions.S, D1.turnTo(D1.Directions.E, D1.Turns.R));
     }
 
+    @Test
+    void calculateDistance() {
+    }
 }
