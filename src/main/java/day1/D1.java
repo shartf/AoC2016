@@ -49,11 +49,11 @@ public class D1 {
         L, R
     }
 
-    public record Cartesian (int x, int y) {
+    public record Cartesian (int x, int y, Directions dir) {
 
     }
 
-/*Takes current Direction and Side to turn and returns a new Direction */
+    /*Takes current Direction and Side to turn and returns a new Direction */
     public static Directions turnTo(Directions direction, Turns turn) {
         int currentDirection;
         if (turn.equals(Turns.R)) {
@@ -64,16 +64,45 @@ public class D1 {
         return Directions.valueOfLabel((currentDirection + 4) % 4);
     }
 
-// Directions direction = direction.valueOf("N") -> convert string to Enum
-
-    public static ArrayList<Cartesian> calculateDistance (String directionString, int distance, Cartesian cartesian) {
+    /* Returns the last direction and list of all intermediate coordinates for an path*/
+    public static ArrayList<Cartesian> calculateDistance (String directionString,
+                                                          Cartesian lastCoordinate) {
         // instantiate list of cartesians
         var cartList = new ArrayList<Cartesian>();
 
+        Turns turn = null;
+        turn = turn.valueOf(String.valueOf(directionString.charAt(0)));
+        int distance;
+        distance = Integer.parseInt(String.valueOf(directionString.charAt(1)));
+        Directions newDirection = turnTo(lastCoordinate.dir, turn);
 
-        Directions direction = null;
-        direction = direction.valueOf(directionString);
-
+        switch (newDirection) {
+            case N -> {
+                for (int i = lastCoordinate.y; i <= distance ; i++) {
+                    cartList.add(new Cartesian(lastCoordinate.x, i, newDirection));
+                }
+                break;
+            }
+            case E -> {
+                for (int i = lastCoordinate.x; i <= distance; i++) {
+                    cartList.add(new Cartesian(i, lastCoordinate.y, newDirection));
+                }
+                break;
+            }
+            case S -> {
+                for (int i = lastCoordinate.y; i <= (lastCoordinate.y - distance)  ; i--) {
+                    cartList.add(new Cartesian(lastCoordinate.x, i, newDirection));
+                }
+                break;
+            }
+            case W -> {
+                for (int i = lastCoordinate.x; i <= (lastCoordinate.x - distance) ; i--) {
+                    cartList.add(new Cartesian(i, lastCoordinate.y, newDirection));
+                }
+                break;
+            }
+        }
+        return cartList;
     }
 
 
