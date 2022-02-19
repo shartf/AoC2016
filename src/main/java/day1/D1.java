@@ -71,35 +71,31 @@ public class D1 {
         var cartList = new ArrayList<Cartesian>();
 
         Turns turn = null;
-        turn = turn.valueOf(String.valueOf(directionString.charAt(0)));
+        turn = Turns.valueOf(String.valueOf(directionString.charAt(0)));
         int distance;
         distance = Integer.parseInt(String.valueOf(directionString.charAt(1)));
         Directions newDirection = turnTo(lastCoordinate.dir, turn);
 
         switch (newDirection) {
             case N -> {
-                for (int i = lastCoordinate.y; i <= distance ; i++) {
+                for (int i = lastCoordinate.y + 1; i <= lastCoordinate.y + distance ; i++) {
                     cartList.add(new Cartesian(lastCoordinate.x, i, newDirection));
                 }
-                break;
             }
             case E -> {
-                for (int i = lastCoordinate.x; i <= distance; i++) {
+                for (int i = lastCoordinate.x + 1; i <= lastCoordinate.x + distance; i++) {
                     cartList.add(new Cartesian(i, lastCoordinate.y, newDirection));
                 }
-                break;
             }
             case S -> {
-                for (int i = lastCoordinate.y; i <= (lastCoordinate.y - distance)  ; i--) {
+                for (int i = lastCoordinate.y - 1; i >= (lastCoordinate.y - distance)  ; i--) {
                     cartList.add(new Cartesian(lastCoordinate.x, i, newDirection));
                 }
-                break;
             }
             case W -> {
-                for (int i = lastCoordinate.x; i <= (lastCoordinate.x - distance) ; i--) {
+                for (int i = lastCoordinate.x - 1; i >= (lastCoordinate.x - distance) ; i--) {
                     cartList.add(new Cartesian(i, lastCoordinate.y, newDirection));
                 }
-                break;
             }
         }
         return cartList;
