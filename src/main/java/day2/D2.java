@@ -5,11 +5,11 @@ public class D2 {
         // download file
     }
 
-    public enum Directions {
+    protected enum Directions {
         D, L, R, U,
     }
 
-    public static int calculateNextPin (Directions direction, int lastPin) {
+    protected static int calculateNextPin (Directions direction, int lastPin) {
         int newPin = 0;
         switch (direction) {
             case R -> {

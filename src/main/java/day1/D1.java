@@ -56,7 +56,7 @@ public class D1 {
 
     }
 
-    enum Directions {
+    protected enum Directions {
         N(0), E(1), S(2), W(3);
 
         public final int label;
@@ -74,16 +74,16 @@ public class D1 {
         }
     }
 
-    enum Turns {
+    protected enum Turns {
         L, R
     }
 
-    public record Cartesian (int x, int y, Directions dir) {
+    protected record Cartesian (int x, int y, Directions dir) {
 
     }
 
     /*Takes current Direction and Side to turn and returns a new Direction */
-    public static Directions turnTo(Directions direction, Turns turn) {
+    protected static Directions turnTo(Directions direction, Turns turn) {
         int currentDirection;
         if (turn.equals(Turns.R)) {
             currentDirection = direction.label + 1;
@@ -94,7 +94,7 @@ public class D1 {
     }
 
     /* Returns the last direction and list of all intermediate coordinates for an path*/
-    public static ArrayList<Cartesian> calculateDistance (String directionString,
+    protected static ArrayList<Cartesian> calculateDistance (String directionString,
                                                           Cartesian lastCoordinate) {
         // instantiate list of cartesians
         var cartList = new ArrayList<Cartesian>();
