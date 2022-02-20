@@ -1,8 +1,24 @@
 package day2;
 
+import helper.DownloadData;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.List;
+
 public class D2 {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException, InterruptedException {
         // download file
+        DownloadData downloadData = new DownloadData();
+        downloadData.downloadFile("day2", 2016, 2);
+
+        Path path = Path.of("src/main/resources", "day2.txt");
+        List<String[]> parsedList = null;
+        if (Files.exists(path)) {
+            List<String> lines = Files.readAllLines(path);
+            parsedList = lines.stream().map(s -> s.split("\n")).toList();
+        }
     }
 
     protected enum Directions {
