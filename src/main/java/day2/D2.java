@@ -25,11 +25,12 @@ public class D2 {
         // Calculate pins
         for (String[] line: parsedList) {
             int pin = 5;
-            for (int i = 0; i < line.length - 1; i++) {
-                if (i < line.length - 1) {
-                    pin = calculateNextPin(Directions.valueOf(line[i]), pin);
+            for (int i = 0; i < line[0].length() - 1; i++) {
+                if (i < line[0].length() - 2) {
+                    pin = calculateNextPin(Directions.valueOf(String.valueOf(line[0].charAt(i))), pin);
+                    System.out.println("Intermediate Step is: " + line[0].charAt(i) + " resulting in pin " + pin);
                 } else {
-                    pin = calculateNextPin(Directions.valueOf(line[i]), pin);
+                    pin = calculateNextPin(Directions.valueOf(String.valueOf(line[0].charAt(i))), pin);
                     System.out.println(pin);
                 }
             }
@@ -66,7 +67,7 @@ public class D2 {
                 }
             }
             case U -> {
-                if (lastPin >1 && lastPin < 4) {
+                if (lastPin >=1 && lastPin < 4) {
                     newPin = lastPin;
                 } else {
                     newPin = lastPin - 3;
