@@ -5,6 +5,8 @@ import helper.DownloadData;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 
 public class D2 {
@@ -18,6 +20,20 @@ public class D2 {
         if (Files.exists(path)) {
             List<String> lines = Files.readAllLines(path);
             parsedList = lines.stream().map(s -> s.split("\n")).toList();
+        }
+
+        // Calculate pins
+        for (String[] line: parsedList) {
+            int pin = 5;
+            for (int i = 0; i < line.length - 1; i++) {
+                if (i < line.length - 1) {
+                    pin = calculateNextPin(Directions.valueOf(line[i]), pin);
+                } else {
+                    pin = calculateNextPin(Directions.valueOf(line[i]), pin);
+                    System.out.println(pin);
+                }
+            }
+
         }
     }
 
@@ -60,3 +76,5 @@ public class D2 {
         return newPin;
     }
 }
+
+
